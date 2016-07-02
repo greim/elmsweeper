@@ -89,6 +89,10 @@ view grid =
           ]
         , tgrid isBombed noneUncovered isWin grid
         ]
+      , Html.p []
+        [ text "Github: "
+        , Html.a [Html.Attributes.href "https://github.com/greim/elmsweeper"] [text "github.com/greim/elmsweeper"]
+        ]
       ]
 
 face isBombed isWin =
