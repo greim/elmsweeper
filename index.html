@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="UTF-8"><title>Main</title>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:900" rel="stylesheet">
+<style>
+
+body {
+  padding:10px;
+  margin:10px;
+  background:#fff;
+  text-align:center;
+}
+
+h1 {
+  font-family: "Source Code Pro";
+  font-weight: 900;
+  color: #680;
+  text-shadow: 1px 1px 0 #000;
+  letter-spacing: 5px;
+}
+
+body {
+  font-family: calibri, helvetica, arial, sans-serif;
+}
+
+.grid-wrapper {
+  background:#ccc;
+  padding:12px;
+  border: 2px solid #ccc;
+  border-color:#fff #777 #777 #fff;
+  display: inline-block;
+  box-shadow: -1px -1px 0 #ddd;
+  border-radius: 4px;
+}
+
+.grid-head {
+  height: 44px;
+  border: 2px solid #ccc;
+  border-color:#999 #eee #eee #999;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.grid-remaining,
+.grid-time {
+  position: absolute;
+  top:5px;
+  background:#000;
+  color:#f00;
+  font-size:33px;
+  font-family: "Courier New", monospace;
+  font-weight: 600;
+  line-height:1;
+  padding:2px 5px;
+  height:29px;
+  box-shadow:1px 1px 0 rgba(255,255,255,0.5), -1px -1px 0 rgba(0,0,0,0.1);
+}
+
+.grid-remaining {
+  left: 6px;
+}
+
+.grid-time {
+  right: 6px;
+}
+
+.face {
+  display: inline-block;
+  background: transparent url('img/happy-face.png') no-repeat 50% 50%;
+  background-size: 92%;
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+  border: 2px solid;
+  border-color: #fff #777 #777 #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.5);
+}
+.win.face {
+  background-image: url('img/win-face.png');
+}
+.sad.face {
+  background-image: url('img/sad-face.png');
+}
+
+table.grid {
+  border: 2px solid #ccc;
+  border-color:#999 #eee #eee #999;
+  border-spacing:0;
+}
+
+td.grid-cell {
+  font-size: 12px;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: bold;
+  font-family: "Source Code Pro";
+  font-weight: 900;
+  line-height: 1;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+td.grid-cell.covered,
+td.grid-cell.flagged {
+  width: 14px;
+  height:14px;
+  border: 2px solid;
+  border-color: #fff #777 #777 #fff;
+  background-color: #bbb;
+  color: #333;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+}
+
+td.grid-cell.flagged {
+  background-image: url('img/flag.png');
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: 80%;
+}
+
+td.grid-cell.cleared {
+  width: 17px;
+  height:17px;
+  border: 1px solid #999;
+  border-width: 0 1px 1px 0;
+  background-color:#ccc;
+}
+
+td.grid-cell.bombed {
+  background: #d00;
+  width: 16px;
+  height:16px;
+  border: 1px solid;
+  border-color: #e22 #b00 #b00 #e22;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+}
+
+.number { font-size: 16px; }
+.number.n1 { color: #1515ff; }
+.number.n2 { color: #080; }
+.number.n3 { color: #c00; }
+.number.n4 { color: #009; }
+.number.n5 { color: #790000; }
+.number.n6 { color: #0086bd; }
+.number.n7 { color: #333; }
+.number.n8 { color: #848484; }
+
+</style>
+
+<script type="text/javascript" src="elm.js"></script></head><body><script type="text/javascript">Elm.Main.fullscreen()</script></body></html>
