@@ -20,11 +20,14 @@ main =
 -- MODEL
 
 
-type alias Model = Grid
+type alias Model =
+  { secondsElapsed : Int
+  , grid : Grid
+  }
 
 init : (Model, Cmd Msg)
 init =
-  ( Grid.create gridHeight gridWidth
+  ( Model 0 (Grid.create gridHeight gridWidth)
   , Cmd.none
   )
 
@@ -46,33 +49,33 @@ type Msg
   | None
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update msg grid =
+update msg model =
   case msg of
-    None -> (grid, Cmd.none)
+    None -> (model, Cmd.none)
     Restart ->
-      (Grid.create gridHeight gridWidth, Cmd.none)
+      (Model 0 (Grid.create gridHeight gridWidth), Cmd.none)
     Flag y x ->
-      ((Grid.flag y x grid), Cmd.none)
+      ({ model | grid = Grid.flag y x grid }, Cmd.none)
     Plant y x ->
-      (grid, Random.generate (\newGrid -> SetPlanted newGrid y x) (Grid.plantBombs y x bombCount grid))
+      (model, Random.generate (\newGrid -> SetPlanted newGrid y x) (Grid.plantBombs y x bombCount model.grid))
     SetPlanted newGrid y x ->
       case Grid.get y x newGrid of
-        Nothing -> (grid, Cmd.none)
+        Nothing -> (model, Cmd.none)
         Just cell ->
           if cell.hasBomb then
-            (grid, Random.generate (\yetAnotherGrid -> SetPlanted yetAnotherGrid y x) (Grid.plantBombs y x bombCount grid))
+            (model, Random.generate (\yetAnotherGrid -> SetPlanted yetAnotherGrid y x) (Grid.plantBombs y x bombCount model.grid))
           else
-            ((Grid.uncoverAll y x newGrid), Cmd.none)
+            ({ model | grid = Grid.uncoverAll y x newGrid }, Cmd.none)
     Clear y x ->
-      ((Grid.uncoverAll y x grid), Cmd.none)
+      ({ model | grid = Grid.uncoverAll y x grid }, Cmd.none)
     NeighborClear y x ->
-      ((Grid.neighborClear y x grid), Cmd.none)
+      ({ model | grid = Grid.neighborClear y x grid }, Cmd.none)
 
 -- VIEW
 
 
 view : Model -> Html Msg
-view grid =
+view { secondsElapsed, grid } =
   let
     isBombed = Grid.isBombed grid
     isWin = Grid.isWin grid
@@ -84,7 +87,7 @@ view grid =
         , div [class "grid-wrapper"]
         [ div [class "grid-head"]
           [ span [class "grid-remaining"] [ text (leftPad "0" 3 (remaining isWin remainingCount)) ]
-          , span [class "grid-time"] [ text "000" ]
+          , span [class "grid-time"] [ text (leftPad "0" 3 secondsElapsed) ]
           , face isBombed isWin
           ]
         , tgrid isBombed noneUncovered isWin grid
