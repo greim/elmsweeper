@@ -1,7 +1,7 @@
 import Html exposing (Html, button, div, text, td, tr, table, hr, strong, span, h1, i, strong)
 import Html.App as Html
 import Html.Events exposing (onClick, on, onWithOptions)
-import Html.Attributes exposing (style, title, class, classList)
+import Html.Attributes exposing (style, title, class, classList, attribute, href)
 import Grid exposing (Grid, Row, Cell)
 import Random exposing (generate)
 import Debug exposing (log)
@@ -109,6 +109,17 @@ view { secondsElapsed, grid } =
       , Html.p []
         [ text "Github: "
         , Html.a [Html.Attributes.href "https://github.com/greim/elmsweeper"] [text "github.com/greim/elmsweeper"]
+        ]
+        , Html.p []
+        [ Html.a
+          [ href "https://twitter.com/share"
+          , class "twitter-share-button"
+          , attribute "data-url" "https://greim.github.io/elmsweeper/"
+          , attribute "data-text" "Elmsweeper: Minesweeper in Elm."
+          , attribute "data-via" "greim"
+          , attribute "data-size" "large"
+          , attribute "data-hashtags" "elmlang"
+          ] [text "Tweet"]
         ]
       ]
 
