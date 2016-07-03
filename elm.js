@@ -9815,6 +9815,32 @@ var _user$project$Grid$isWin = function (grid) {
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
+var _user$project$Main$getCellContents = F3(
+	function (cell, count, isBombed) {
+		var _p0 = cell.status;
+		switch (_p0.ctor) {
+			case 'Cleared':
+				return cell.hasBomb ? _elm_lang$html$Html$text('') : ((_elm_lang$core$Native_Utils.cmp(count, 0) > 0) ? A2(
+					_elm_lang$html$Html$strong,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'number n',
+								_elm_lang$core$Basics$toString(count)))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(
+							_elm_lang$core$Basics$toString(count))
+						])) : _elm_lang$html$Html$text(''));
+			case 'Flagged':
+				return _elm_lang$html$Html$text('');
+			default:
+				return (isBombed && cell.hasBomb) ? _elm_lang$html$Html$text('') : _elm_lang$html$Html$text('');
+		}
+	});
 var _user$project$Main$cellBaseClasses = _elm_lang$core$Native_List.fromArray(
 	[
 		{ctor: '_Tuple2', _0: 'grid-cell', _1: true}
@@ -9835,6 +9861,14 @@ var _user$project$Main$cellBombedClasses = _elm_lang$html$Html_Attributes$classL
 				{ctor: '_Tuple2', _0: 'bombed', _1: true}
 			]),
 		_user$project$Main$cellBaseClasses));
+var _user$project$Main$cellRevealBombClasses = _elm_lang$html$Html_Attributes$classList(
+	A2(
+		_elm_lang$core$List$append,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 'covered reveal-bomb', _1: true}
+			]),
+		_user$project$Main$cellBaseClasses));
 var _user$project$Main$cellFlaggedClasses = _elm_lang$html$Html_Attributes$classList(
 	A2(
 		_elm_lang$core$List$append,
@@ -9851,43 +9885,6 @@ var _user$project$Main$cellCoveredClasses = _elm_lang$html$Html_Attributes$class
 				{ctor: '_Tuple2', _0: 'covered', _1: true}
 			]),
 		_user$project$Main$cellBaseClasses));
-var _user$project$Main$icon = function (name) {
-	return A2(
-		_elm_lang$html$Html$i,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class(
-				A2(_elm_lang$core$Basics_ops['++'], 'fa fa-', name))
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[]));
-};
-var _user$project$Main$getCellContents = F3(
-	function (cell, count, isBombed) {
-		var _p0 = cell.status;
-		switch (_p0.ctor) {
-			case 'Cleared':
-				return cell.hasBomb ? _user$project$Main$icon('circle') : ((_elm_lang$core$Native_Utils.cmp(count, 0) > 0) ? A2(
-					_elm_lang$html$Html$strong,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html_Attributes$class(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'number n',
-								_elm_lang$core$Basics$toString(count)))
-						]),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(count))
-						])) : _elm_lang$html$Html$text(''));
-			case 'Flagged':
-				return _elm_lang$html$Html$text('');
-			default:
-				return (isBombed && cell.hasBomb) ? _user$project$Main$icon('circle') : _elm_lang$html$Html$text('');
-		}
-	});
 var _user$project$Main$leftPad = F3(
 	function (padder, width, str) {
 		leftPad:
@@ -10100,7 +10097,7 @@ var _user$project$Main$tcell = F7(
 				case 'Flagged':
 					return _user$project$Main$cellFlaggedClasses;
 				default:
-					return _user$project$Main$cellCoveredClasses;
+					return (isBombed && cell.hasBomb) ? _user$project$Main$cellRevealBombClasses : _user$project$Main$cellCoveredClasses;
 			}
 		}();
 		return A2(

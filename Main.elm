@@ -146,7 +146,7 @@ tcell isBombed noneUncovered isWin grid y x cell =
     classes = case cell.status of
       Grid.Cleared -> if cell.hasBomb then cellBombedClasses else cellClearedClasses
       Grid.Flagged -> cellFlaggedClasses
-      Grid.Covered -> cellCoveredClasses
+      Grid.Covered -> if isBombed && cell.hasBomb then cellRevealBombClasses else cellCoveredClasses
   in
     td
       [ classes
@@ -189,21 +189,10 @@ handleButton y x evButtons =
     _ -> Ok (Clear y x)
 
 
-
-
-
-
-
-
-
-
-icon : String -> Html Msg
-icon name =
-  i [class ("fa fa-" ++ name)] []
-
 cellBaseClasses = [("grid-cell",True)]
 cellClearedClasses = classList (List.append [("cleared",True)] cellBaseClasses)
 cellBombedClasses = classList (List.append [("bombed",True)] cellBaseClasses)
+cellRevealBombClasses = classList (List.append [("covered reveal-bomb",True)] cellBaseClasses)
 cellFlaggedClasses = classList (List.append [("flagged",True)] cellBaseClasses)
 cellCoveredClasses = classList (List.append [("covered",True)] cellBaseClasses)
 
@@ -212,7 +201,7 @@ getCellContents cell count isBombed =
   case cell.status of
     Grid.Cleared ->
       if cell.hasBomb then
-        icon "circle"
+        text ""
       else if count > 0 then
         strong [class ("number n" ++ (toString count))] [text (toString count)]
       else
@@ -221,7 +210,7 @@ getCellContents cell count isBombed =
       text ""
     Grid.Covered ->
       if isBombed && cell.hasBomb then
-        icon "circle"
+        text ""
       else
         text ""
 

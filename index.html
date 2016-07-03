@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
 <html><head><meta charset="UTF-8"><title>Main</title>
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
 <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:900" rel="stylesheet">
 <style>
 
@@ -131,12 +130,18 @@ td.grid-cell.cleared {
 }
 
 td.grid-cell.bombed {
-  background: #d00;
+  background: #d00 url('img/mine.png') no-repeat 50% 50%;
+  background-size: contain;
   width: 16px;
   height:16px;
   border: 1px solid;
   border-color: #e22 #b00 #b00 #e22;
   text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+}
+
+td.grid-cell.reveal-bomb {
+  background: #ccc url('img/mine.png') no-repeat 50% 50%;
+  background-size: contain;
 }
 
 .number { font-size: 16px; }
