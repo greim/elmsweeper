@@ -9111,12 +9111,20 @@ var _user$project$Queue$deq = function (queue) {
 	}
 };
 
+var _user$project$Grid$width = function (grid) {
+	var _p0 = A2(_elm_lang$core$Array$get, 0, grid);
+	if (_p0.ctor === 'Nothing') {
+		return 0;
+	} else {
+		return _elm_lang$core$Array$length(_p0._0);
+	}
+};
 var _user$project$Grid$shift = function (arr) {
-	var _p0 = A2(_elm_lang$core$Array$get, 0, arr);
-	if (_p0.ctor === 'Just') {
+	var _p1 = A2(_elm_lang$core$Array$get, 0, arr);
+	if (_p1.ctor === 'Just') {
 		return {
 			ctor: '_Tuple2',
-			_0: _elm_lang$core$Maybe$Just(_p0._0),
+			_0: _elm_lang$core$Maybe$Just(_p1._0),
 			_1: A3(
 				_elm_lang$core$Array$slice,
 				1,
@@ -9127,27 +9135,100 @@ var _user$project$Grid$shift = function (arr) {
 		return {ctor: '_Tuple2', _0: _elm_lang$core$Maybe$Nothing, _1: arr};
 	}
 };
+var _user$project$Grid$setStatusInRow = F3(
+	function (x, status, row) {
+		var _p2 = A2(_elm_lang$core$Array$get, x, row);
+		if (_p2.ctor === 'Just') {
+			return A3(
+				_elm_lang$core$Array$set,
+				x,
+				_elm_lang$core$Native_Utils.update(
+					_p2._0,
+					{status: status}),
+				row);
+		} else {
+			return row;
+		}
+	});
+var _user$project$Grid$setStatus = F4(
+	function (y, x, status, grid) {
+		var _p3 = A2(_elm_lang$core$Array$get, y, grid);
+		if (_p3.ctor === 'Just') {
+			return A3(
+				_elm_lang$core$Array$set,
+				y,
+				A3(_user$project$Grid$setStatusInRow, x, status, _p3._0),
+				grid);
+		} else {
+			return grid;
+		}
+	});
+var _user$project$Grid$setBombInRow = F3(
+	function (x, isBomb, row) {
+		var _p4 = A2(_elm_lang$core$Array$get, x, row);
+		if (_p4.ctor === 'Just') {
+			return A3(
+				_elm_lang$core$Array$set,
+				x,
+				_elm_lang$core$Native_Utils.update(
+					_p4._0,
+					{hasBomb: isBomb}),
+				row);
+		} else {
+			return row;
+		}
+	});
+var _user$project$Grid$setBomb = F4(
+	function (y, x, isBomb, grid) {
+		var _p5 = A2(_elm_lang$core$Array$get, y, grid);
+		if (_p5.ctor === 'Just') {
+			return A3(
+				_elm_lang$core$Array$set,
+				y,
+				A3(_user$project$Grid$setBombInRow, x, isBomb, _p5._0),
+				grid);
+		} else {
+			return grid;
+		}
+	});
+var _user$project$Grid$plantBombsRecurs = F2(
+	function (bombIndex, grid) {
+		plantBombsRecurs:
+		while (true) {
+			var _p6 = bombIndex;
+			if (_p6.ctor === '[]') {
+				return grid;
+			} else {
+				var newGrid = A4(_user$project$Grid$setBomb, _p6._0._1, _p6._0._2, _p6._0._0, grid);
+				var _v7 = _p6._1,
+					_v8 = newGrid;
+				bombIndex = _v7;
+				grid = _v8;
+				continue plantBombsRecurs;
+			}
+		}
+	});
 var _user$project$Grid$mapWithCounter = F4(
 	function (count, newArr, fn, oldArr) {
 		mapWithCounter:
 		while (true) {
-			var _p1 = _user$project$Grid$shift(oldArr);
-			var item = _p1._0;
-			var oldArrX = _p1._1;
-			var _p2 = item;
-			if (_p2.ctor === 'Just') {
+			var _p7 = _user$project$Grid$shift(oldArr);
+			var item = _p7._0;
+			var oldArrX = _p7._1;
+			var _p8 = item;
+			if (_p8.ctor === 'Just') {
 				var newArrX = A2(
 					_elm_lang$core$Array$push,
-					A2(fn, count, _p2._0),
+					A2(fn, count, _p8._0),
 					newArr);
-				var _v2 = count + 1,
-					_v3 = newArrX,
-					_v4 = fn,
-					_v5 = oldArrX;
-				count = _v2;
-				newArr = _v3;
-				fn = _v4;
-				oldArr = _v5;
+				var _v10 = count + 1,
+					_v11 = newArrX,
+					_v12 = fn,
+					_v13 = oldArrX;
+				count = _v10;
+				newArr = _v11;
+				fn = _v12;
+				oldArr = _v13;
 				continue mapWithCounter;
 			} else {
 				return newArr;
@@ -9159,13 +9240,29 @@ var _user$project$Grid$mapc = F2(
 		return _elm_lang$core$Array$toList(
 			A4(_user$project$Grid$mapWithCounter, 0, _elm_lang$core$Array$empty, fn, arr));
 	});
-var _user$project$Grid$cellMap = F2(
-	function (fn, row) {
-		return A2(_user$project$Grid$mapc, fn, row);
-	});
-var _user$project$Grid$rowMap = F2(
-	function (fn, grid) {
-		return A2(_user$project$Grid$mapc, fn, grid);
+var _user$project$Grid$height = function (grid) {
+	return _elm_lang$core$Array$length(grid);
+};
+var _user$project$Grid$find = F2(
+	function (fn, list) {
+		find:
+		while (true) {
+			var _p9 = list;
+			if (_p9.ctor === '::') {
+				var _p10 = _p9._0;
+				if (fn(_p10)) {
+					return _elm_lang$core$Maybe$Just(_p10);
+				} else {
+					var _v15 = fn,
+						_v16 = _p9._1;
+					fn = _v15;
+					list = _v16;
+					continue find;
+				}
+			} else {
+				return _elm_lang$core$Maybe$Nothing;
+			}
+		}
 	});
 var _user$project$Grid$everyInRow = F2(
 	function (fn, row) {
@@ -9189,100 +9286,32 @@ var _user$project$Grid$every = F2(
 			true,
 			grid);
 	});
-var _user$project$Grid$get = F3(
-	function (y, x, grid) {
-		var _p3 = A2(_elm_lang$core$Array$get, y, grid);
-		if (_p3.ctor === 'Just') {
-			return A2(_elm_lang$core$Array$get, x, _p3._0);
-		} else {
-			return _elm_lang$core$Maybe$Nothing;
-		}
-	});
-var _user$project$Grid$isCleared = F3(
-	function (y, x, grid) {
-		var _p4 = A3(_user$project$Grid$get, y, x, grid);
-		if (_p4.ctor === 'Nothing') {
-			return false;
-		} else {
-			var _p5 = _p4._0.status;
-			switch (_p5.ctor) {
-				case 'Flagged':
-					return false;
-				case 'Covered':
-					return false;
-				default:
-					return true;
-			}
-		}
-	});
-var _user$project$Grid$isFlagged = F3(
-	function (y, x, grid) {
-		var _p6 = A3(_user$project$Grid$get, y, x, grid);
-		if (_p6.ctor === 'Nothing') {
-			return false;
-		} else {
-			var _p7 = _p6._0.status;
-			if (_p7.ctor === 'Flagged') {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	});
-var _user$project$Grid$setInRow = F3(
-	function (x, status, row) {
-		var _p8 = A2(_elm_lang$core$Array$get, x, row);
-		if (_p8.ctor === 'Just') {
-			return A3(
-				_elm_lang$core$Array$set,
-				x,
-				_elm_lang$core$Native_Utils.update(
-					_p8._0,
-					{status: status}),
-				row);
-		} else {
-			return row;
-		}
-	});
-var _user$project$Grid$set = F4(
-	function (y, x, status, grid) {
-		var _p9 = A2(_elm_lang$core$Array$get, y, grid);
-		if (_p9.ctor === 'Just') {
-			return A3(
-				_elm_lang$core$Array$set,
-				y,
-				A3(_user$project$Grid$setInRow, x, status, _p9._0),
-				grid);
-		} else {
-			return grid;
-		}
-	});
 var _user$project$Grid$dedupe = F3(
 	function (dupes, noDupes, deduper) {
 		dedupe:
 		while (true) {
-			var _p10 = dupes;
-			if (_p10.ctor === '[]') {
+			var _p11 = dupes;
+			if (_p11.ctor === '[]') {
 				return noDupes;
 			} else {
-				var _p12 = _p10._0._1;
-				var _p11 = _p10._0._2;
-				var cellYX = {ctor: '_Tuple3', _0: _p10._0._0, _1: _p12, _2: _p11};
+				var _p13 = _p11._0._1;
+				var _p12 = _p11._0._2;
+				var cellYX = {ctor: '_Tuple3', _0: _p11._0._0, _1: _p13, _2: _p12};
 				var isDupe = A2(
 					_elm_lang$core$Set$member,
-					{ctor: '_Tuple2', _0: _p12, _1: _p11},
+					{ctor: '_Tuple2', _0: _p13, _1: _p12},
 					deduper);
 				var newDeduper = isDupe ? deduper : A2(
 					_elm_lang$core$Set$insert,
-					{ctor: '_Tuple2', _0: _p12, _1: _p11},
+					{ctor: '_Tuple2', _0: _p13, _1: _p12},
 					deduper);
 				var newNoDupes = isDupe ? noDupes : A2(_elm_lang$core$List_ops['::'], cellYX, noDupes);
-				var _v14 = _p10._1,
-					_v15 = newNoDupes,
-					_v16 = newDeduper;
-				dupes = _v14;
-				noDupes = _v15;
-				deduper = _v16;
+				var _v18 = _p11._1,
+					_v19 = newNoDupes,
+					_v20 = newDeduper;
+				dupes = _v18;
+				noDupes = _v19;
+				deduper = _v20;
 				continue dedupe;
 			}
 		}
@@ -9291,9 +9320,9 @@ var _user$project$Grid$addVisits = F2(
 	function (cells, visited) {
 		var coords = A2(
 			_elm_lang$core$List$map,
-			function (_p13) {
-				var _p14 = _p13;
-				return {ctor: '_Tuple2', _0: _p14._1, _1: _p14._2};
+			function (_p14) {
+				var _p15 = _p14;
+				return {ctor: '_Tuple2', _0: _p15._1, _1: _p15._2};
 			},
 			cells);
 		return _elm_lang$core$Set$fromList(
@@ -9302,25 +9331,29 @@ var _user$project$Grid$addVisits = F2(
 				coords,
 				_elm_lang$core$Set$toList(visited)));
 	});
-var _user$project$Grid$find = F2(
-	function (fn, list) {
-		find:
-		while (true) {
-			var _p15 = list;
-			if (_p15.ctor === '::') {
-				var _p16 = _p15._0;
-				if (fn(_p16)) {
-					return _elm_lang$core$Maybe$Just(_p16);
-				} else {
-					var _v19 = fn,
-						_v20 = _p15._1;
-					fn = _v19;
-					list = _v20;
-					continue find;
-				}
-			} else {
-				return _elm_lang$core$Maybe$Nothing;
-			}
+var _user$project$Grid$rowMap = F2(
+	function (fn, grid) {
+		return A2(_user$project$Grid$mapc, fn, grid);
+	});
+var _user$project$Grid$plantBombs = F4(
+	function (yOrigin, xOrigin, bombCount, grid) {
+		var colCount = _user$project$Grid$width(grid);
+		var rowCount = _user$project$Grid$height(grid);
+		var bombGen = A3(_user$project$BombIndex$create, rowCount, colCount, bombCount);
+		return A2(
+			_elm_lang$core$Random$map,
+			function (bombIndex) {
+				return A2(_user$project$Grid$plantBombsRecurs, bombIndex, grid);
+			},
+			bombGen);
+	});
+var _user$project$Grid$get = F3(
+	function (y, x, grid) {
+		var _p16 = A2(_elm_lang$core$Array$get, y, grid);
+		if (_p16.ctor === 'Just') {
+			return A2(_elm_lang$core$Array$get, x, _p16._0);
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
 		}
 	});
 var _user$project$Grid$getWithCoords = F3(
@@ -9369,12 +9402,43 @@ var _user$project$Grid$balloon = F3(
 				[]),
 			_elm_lang$core$Set$empty);
 	});
+var _user$project$Grid$isCleared = F3(
+	function (y, x, grid) {
+		var _p20 = A3(_user$project$Grid$get, y, x, grid);
+		if (_p20.ctor === 'Nothing') {
+			return false;
+		} else {
+			var _p21 = _p20._0.status;
+			switch (_p21.ctor) {
+				case 'Flagged':
+					return false;
+				case 'Covered':
+					return false;
+				default:
+					return true;
+			}
+		}
+	});
+var _user$project$Grid$isFlagged = F3(
+	function (y, x, grid) {
+		var _p22 = A3(_user$project$Grid$get, y, x, grid);
+		if (_p22.ctor === 'Nothing') {
+			return false;
+		} else {
+			var _p23 = _p22._0.status;
+			if (_p23.ctor === 'Flagged') {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	});
 var _user$project$Grid$countNeighborMines = F3(
 	function (y, x, grid) {
 		var foldFn = F2(
-			function (_p20, tally) {
-				var _p21 = _p20;
-				return _p21._0.hasBomb ? (tally + 1) : tally;
+			function (_p24, tally) {
+				var _p25 = _p24;
+				return _p25._0.hasBomb ? (tally + 1) : tally;
 			});
 		var neighbors = A3(_user$project$Grid$getNeighbors, y, x, grid);
 		return A3(_elm_lang$core$List$foldl, foldFn, 0, neighbors);
@@ -9387,56 +9451,26 @@ var _user$project$Grid$hasNeighborMines = F3(
 	});
 var _user$project$Grid$notAdjacentToBomb = F3(
 	function (y, x, grid) {
-		var _p22 = A3(_user$project$Grid$get, y, x, grid);
-		if (_p22.ctor === 'Nothing') {
+		var _p26 = A3(_user$project$Grid$get, y, x, grid);
+		if (_p26.ctor === 'Nothing') {
 			return true;
 		} else {
-			return _elm_lang$core$Basics$not(_p22._0.hasBomb) && _elm_lang$core$Native_Utils.eq(
+			return _elm_lang$core$Basics$not(_p26._0.hasBomb) && _elm_lang$core$Native_Utils.eq(
 				A3(_user$project$Grid$countNeighborMines, y, x, grid),
 				0);
 		}
 	});
-var _user$project$Grid$getZeroCell = F3(
-	function (y, x, grid) {
-		var _p23 = A3(_user$project$Grid$get, y, x, grid);
-		if (_p23.ctor === 'Nothing') {
-			return _elm_lang$core$Maybe$Nothing;
-		} else {
-			if (A3(_user$project$Grid$notAdjacentToBomb, y, x, grid)) {
-				return _elm_lang$core$Maybe$Just(
-					{ctor: '_Tuple3', _0: _p23._0, _1: y, _2: x});
-			} else {
-				var findFn = function (_p24) {
-					var _p25 = _p24;
-					return A3(_user$project$Grid$notAdjacentToBomb, _p25._1, _p25._2, grid);
-				};
-				var neighbors = A3(_user$project$Grid$getNeighbors, y, x, grid);
-				return A2(_user$project$Grid$find, findFn, neighbors);
-			}
-		}
-	});
 var _user$project$Grid$bordersEmpty = F3(
 	function (y, x, grid) {
-		var anyFn = function (_p26) {
-			var _p27 = _p26;
-			return A3(_user$project$Grid$notAdjacentToBomb, _p27._1, _p27._2, grid);
+		var anyFn = function (_p27) {
+			var _p28 = _p27;
+			return A3(_user$project$Grid$notAdjacentToBomb, _p28._1, _p28._2, grid);
 		};
 		var neighbors = A3(_user$project$Grid$getNeighbors, y, x, grid);
 		var bordersNonAdjacent = A2(_elm_lang$core$List$any, anyFn, neighbors);
 		var notSelfAdjacent = A3(_user$project$Grid$notAdjacentToBomb, y, x, grid);
 		return notSelfAdjacent || bordersNonAdjacent;
 	});
-var _user$project$Grid$height = function (grid) {
-	return _elm_lang$core$Array$length(grid);
-};
-var _user$project$Grid$width = function (grid) {
-	var _p28 = A2(_elm_lang$core$Array$get, 0, grid);
-	if (_p28.ctor === 'Nothing') {
-		return 0;
-	} else {
-		return _elm_lang$core$Array$length(_p28._0);
-	}
-};
 var _user$project$Grid$getContiguousRecurs = F4(
 	function (queue, visited, results, grid) {
 		getContiguousRecurs:
@@ -9477,116 +9511,79 @@ var _user$project$Grid$getContiguousRecurs = F4(
 				var nextVisited = isMatch ? A2(_user$project$Grid$addVisits, unvisitedNeighbors, visited) : visited;
 				var nextQueue = isMatch ? A2(_user$project$Queue$enqAll, unvisitedNeighbors, newQueue) : newQueue;
 				var wid = _user$project$Grid$width(grid);
-				var _v32 = nextQueue,
-					_v33 = nextVisited,
-					_v34 = nextResults,
-					_v35 = grid;
-				queue = _v32;
-				visited = _v33;
-				results = _v34;
-				grid = _v35;
+				var _v35 = nextQueue,
+					_v36 = nextVisited,
+					_v37 = nextResults,
+					_v38 = grid;
+				queue = _v35;
+				visited = _v36;
+				results = _v37;
+				grid = _v38;
 				continue getContiguousRecurs;
+			}
+		}
+	});
+var _user$project$Grid$getZeroCell = F3(
+	function (y, x, grid) {
+		var _p37 = A3(_user$project$Grid$get, y, x, grid);
+		if (_p37.ctor === 'Nothing') {
+			return _elm_lang$core$Maybe$Nothing;
+		} else {
+			if (A3(_user$project$Grid$notAdjacentToBomb, y, x, grid)) {
+				return _elm_lang$core$Maybe$Just(
+					{ctor: '_Tuple3', _0: _p37._0, _1: y, _2: x});
+			} else {
+				var findFn = function (_p38) {
+					var _p39 = _p38;
+					return A3(_user$project$Grid$notAdjacentToBomb, _p39._1, _p39._2, grid);
+				};
+				var neighbors = A3(_user$project$Grid$getNeighbors, y, x, grid);
+				return A2(_user$project$Grid$find, findFn, neighbors);
 			}
 		}
 	});
 var _user$project$Grid$getContiguous = F3(
 	function (y, x, grid) {
-		var _p37 = A3(_user$project$Grid$get, y, x, grid);
-		if (_p37.ctor === 'Nothing') {
+		var _p40 = A3(_user$project$Grid$get, y, x, grid);
+		if (_p40.ctor === 'Nothing') {
 			return _elm_lang$core$Native_List.fromArray(
 				[]);
 		} else {
-			var originCellYX = {ctor: '_Tuple3', _0: _p37._0, _1: y, _2: x};
-			var _p38 = A3(_user$project$Grid$getZeroCell, y, x, grid);
-			if (_p38.ctor === 'Nothing') {
+			var originCellYX = {ctor: '_Tuple3', _0: _p40._0, _1: y, _2: x};
+			var _p41 = A3(_user$project$Grid$getZeroCell, y, x, grid);
+			if (_p41.ctor === 'Nothing') {
 				return _elm_lang$core$Native_List.fromArray(
 					[originCellYX]);
 			} else {
-				var _p40 = _p38._0._1;
-				var _p39 = _p38._0._2;
+				var _p43 = _p41._0._1;
+				var _p42 = _p41._0._2;
 				var results = _elm_lang$core$Native_List.fromArray(
 					[]);
 				var visited = _elm_lang$core$Set$singleton(
-					{ctor: '_Tuple2', _0: _p40, _1: _p39});
+					{ctor: '_Tuple2', _0: _p43, _1: _p42});
 				var wid = _user$project$Grid$width(grid);
 				var queue = _user$project$Queue$singleton(
-					{ctor: '_Tuple3', _0: _p38._0._0, _1: _p40, _2: _p39});
+					{ctor: '_Tuple3', _0: _p41._0._0, _1: _p43, _2: _p42});
 				return A4(_user$project$Grid$getContiguousRecurs, queue, visited, results, grid);
 			}
 		}
 	});
-var _user$project$Grid$setBombInRow = F3(
-	function (x, isBomb, row) {
-		var _p41 = A2(_elm_lang$core$Array$get, x, row);
-		if (_p41.ctor === 'Just') {
-			return A3(
-				_elm_lang$core$Array$set,
-				x,
-				_elm_lang$core$Native_Utils.update(
-					_p41._0,
-					{hasBomb: isBomb}),
-				row);
-		} else {
-			return row;
-		}
-	});
-var _user$project$Grid$setBomb = F4(
-	function (y, x, isBomb, grid) {
-		var _p42 = A2(_elm_lang$core$Array$get, y, grid);
-		if (_p42.ctor === 'Just') {
-			return A3(
-				_elm_lang$core$Array$set,
-				y,
-				A3(_user$project$Grid$setBombInRow, x, isBomb, _p42._0),
-				grid);
-		} else {
-			return grid;
-		}
-	});
-var _user$project$Grid$plantBombsRecurs = F2(
-	function (bombIndex, grid) {
-		plantBombsRecurs:
-		while (true) {
-			var _p43 = bombIndex;
-			if (_p43.ctor === '[]') {
-				return grid;
-			} else {
-				var newGrid = A4(_user$project$Grid$setBomb, _p43._0._1, _p43._0._2, _p43._0._0, grid);
-				var _v41 = _p43._1,
-					_v42 = newGrid;
-				bombIndex = _v41;
-				grid = _v42;
-				continue plantBombsRecurs;
-			}
-		}
-	});
-var _user$project$Grid$plantBombs = F4(
-	function (yOrigin, xOrigin, bombCount, grid) {
-		var colCount = _user$project$Grid$width(grid);
-		var rowCount = _user$project$Grid$height(grid);
-		var bombGen = A3(_user$project$BombIndex$create, rowCount, colCount, bombCount);
-		return A2(
-			_elm_lang$core$Random$map,
-			function (bombIndex) {
-				return A2(_user$project$Grid$plantBombsRecurs, bombIndex, grid);
-			},
-			bombGen);
+var _user$project$Grid$cellMap = F2(
+	function (fn, row) {
+		return A2(_user$project$Grid$mapc, fn, row);
 	});
 var _user$project$Grid$Cell = F2(
 	function (a, b) {
 		return {status: a, hasBomb: b};
 	});
 var _user$project$Grid$Covered = {ctor: 'Covered'};
-var _user$project$Grid$unclearedRowReducer = F2(
-	function (cell, tally) {
-		return (_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Covered) && cell.hasBomb) ? (tally + 1) : tally;
-	});
-var _user$project$Grid$unclearedReducer = F2(
-	function (row, tally) {
-		return A3(_elm_lang$core$Array$foldl, _user$project$Grid$unclearedRowReducer, tally, row);
-	});
-var _user$project$Grid$unclearedMineCount = function (grid) {
-	return A3(_elm_lang$core$Array$foldl, _user$project$Grid$unclearedReducer, 0, grid);
+var _user$project$Grid$noneUncovered = function (grid) {
+	return A2(
+		_user$project$Grid$every,
+		function (cell) {
+			return _elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Covered);
+		},
+		grid);
 };
 var _user$project$Grid$createCell = F2(
 	function (y, x) {
@@ -9610,13 +9607,16 @@ var _user$project$Grid$create = F2(
 				return A2(_user$project$Grid$createRow, y, xLen);
 			});
 	});
-var _user$project$Grid$noneUncovered = function (grid) {
-	return A2(
-		_user$project$Grid$every,
-		function (cell) {
-			return _elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Covered);
-		},
-		grid);
+var _user$project$Grid$unclearedRowReducer = F2(
+	function (cell, tally) {
+		return (_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Covered) && cell.hasBomb) ? (tally + 1) : tally;
+	});
+var _user$project$Grid$unclearedReducer = F2(
+	function (row, tally) {
+		return A3(_elm_lang$core$Array$foldl, _user$project$Grid$unclearedRowReducer, tally, row);
+	});
+var _user$project$Grid$unclearedMineCount = function (grid) {
+	return A3(_elm_lang$core$Array$foldl, _user$project$Grid$unclearedReducer, 0, grid);
 };
 var _user$project$Grid$Flagged = {ctor: 'Flagged'};
 var _user$project$Grid$flag = F3(
@@ -9628,39 +9628,54 @@ var _user$project$Grid$flag = F3(
 			var _p45 = _p44._0.status;
 			switch (_p45.ctor) {
 				case 'Flagged':
-					return A4(_user$project$Grid$set, y, x, _user$project$Grid$Covered, grid);
+					return A4(_user$project$Grid$setStatus, y, x, _user$project$Grid$Covered, grid);
 				case 'Covered':
-					return A4(_user$project$Grid$set, y, x, _user$project$Grid$Flagged, grid);
+					return A4(_user$project$Grid$setStatus, y, x, _user$project$Grid$Flagged, grid);
 				default:
 					return grid;
 			}
 		}
 	});
-var _user$project$Grid$neighborFlagCount = F3(
-	function (y, x, grid) {
-		var fn = F2(
-			function (_p46, tally) {
-				var _p47 = _p46;
-				return _elm_lang$core$Native_Utils.eq(_p47._0.status, _user$project$Grid$Flagged) ? (tally + 1) : tally;
-			});
-		var neighbors = A3(_user$project$Grid$getNeighbors, y, x, grid);
-		return A3(_elm_lang$core$List$foldl, fn, 0, neighbors);
-	});
 var _user$project$Grid$hasNeighborFlags = F3(
 	function (y, x, grid) {
-		var fn = function (_p48) {
-			var _p49 = _p48;
-			return _elm_lang$core$Native_Utils.eq(_p49._0.status, _user$project$Grid$Flagged);
+		var fn = function (_p46) {
+			var _p47 = _p46;
+			return _elm_lang$core$Native_Utils.eq(_p47._0.status, _user$project$Grid$Flagged);
 		};
 		var neighbors = A3(_user$project$Grid$getNeighbors, y, x, grid);
 		return A2(_elm_lang$core$List$any, fn, neighbors);
 	});
+var _user$project$Grid$neighborFlagCount = F3(
+	function (y, x, grid) {
+		var fn = F2(
+			function (_p48, tally) {
+				var _p49 = _p48;
+				return _elm_lang$core$Native_Utils.eq(_p49._0.status, _user$project$Grid$Flagged) ? (tally + 1) : tally;
+			});
+		var neighbors = A3(_user$project$Grid$getNeighbors, y, x, grid);
+		return A3(_elm_lang$core$List$foldl, fn, 0, neighbors);
+	});
 var _user$project$Grid$Cleared = {ctor: 'Cleared'};
+var _user$project$Grid$isBombed = function (grid) {
+	return _elm_lang$core$Basics$not(
+		A2(
+			_user$project$Grid$every,
+			function (cell) {
+				return (!_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Cleared)) || _elm_lang$core$Basics$not(cell.hasBomb);
+			},
+			grid));
+};
+var _user$project$Grid$isWin = function (grid) {
+	var isAccountedFor = function (cell) {
+		return (_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Cleared) && _elm_lang$core$Basics$not(cell.hasBomb)) || ((!_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Cleared)) && cell.hasBomb);
+	};
+	return A2(_user$project$Grid$every, isAccountedFor, grid);
+};
 var _user$project$Grid$uncover = F3(
 	function (y, x, grid) {
 		var _p50 = A3(_user$project$Grid$get, y, x, grid);
 		if (_p50.ctor === 'Just') {
-			return A4(_user$project$Grid$set, y, x, _user$project$Grid$Cleared, grid);
+			return A4(_user$project$Grid$setStatus, y, x, _user$project$Grid$Cleared, grid);
 		} else {
 			return grid;
 		}
@@ -9704,15 +9719,6 @@ var _user$project$Grid$uncoverAll = F3(
 			return A4(_user$project$Grid$uncoverAllRecurs, y, x, contiguous, newGrid);
 		}
 	});
-var _user$project$Grid$isBombed = function (grid) {
-	return _elm_lang$core$Basics$not(
-		A2(
-			_user$project$Grid$every,
-			function (cell) {
-				return (!_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Cleared)) || _elm_lang$core$Basics$not(cell.hasBomb);
-			},
-			grid));
-};
 var _user$project$Grid$clearAllList = F2(
 	function (neighbors, grid) {
 		clearAllList:
@@ -9745,12 +9751,6 @@ var _user$project$Grid$neighborClear = F3(
 			return grid;
 		}
 	});
-var _user$project$Grid$isWin = function (grid) {
-	var isAccountedFor = function (cell) {
-		return (_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Cleared) && _elm_lang$core$Basics$not(cell.hasBomb)) || ((!_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Cleared)) && cell.hasBomb);
-	};
-	return A2(_user$project$Grid$every, isAccountedFor, grid);
-};
 
 var _user$project$Main$getCellContents = F3(
 	function (cell, count, isBombed) {
