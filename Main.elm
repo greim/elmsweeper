@@ -7,6 +7,7 @@ import Random exposing (generate)
 import Debug exposing (log)
 import Json.Decode as Decode exposing (Decoder, (:=))
 import String
+import Time exposing (Time, second)
 
 main =
   Html.program
@@ -22,12 +23,13 @@ main =
 
 type alias Model =
   { secondsElapsed : Int
+  , isCounting : Bool
   , grid : Grid
   }
 
 init : (Model, Cmd Msg)
 init =
-  ( Model 0 (Grid.create gridHeight gridWidth)
+  ( Model 0 False (Grid.create gridHeight gridWidth)
   , Cmd.none
   )
 
@@ -46,30 +48,42 @@ type Msg
   | Clear Int Int
   | NeighborClear Int Int
   | Restart
+  | Tick Time
   | None
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  case msg of
-    None -> (model, Cmd.none)
-    Restart ->
-      (Model 0 (Grid.create gridHeight gridWidth), Cmd.none)
-    Flag y x ->
-      ({ model | grid = Grid.flag y x grid }, Cmd.none)
-    Plant y x ->
-      (model, Random.generate (\newGrid -> SetPlanted newGrid y x) (Grid.plantBombs y x bombCount model.grid))
-    SetPlanted newGrid y x ->
-      case Grid.get y x newGrid of
-        Nothing -> (model, Cmd.none)
-        Just cell ->
-          if cell.hasBomb then
-            (model, Random.generate (\yetAnotherGrid -> SetPlanted yetAnotherGrid y x) (Grid.plantBombs y x bombCount model.grid))
-          else
-            ({ model | grid = Grid.uncoverAll y x newGrid }, Cmd.none)
-    Clear y x ->
-      ({ model | grid = Grid.uncoverAll y x grid }, Cmd.none)
-    NeighborClear y x ->
-      ({ model | grid = Grid.neighborClear y x grid }, Cmd.none)
+    case msg of
+      None -> (model, Cmd.none)
+      Tick newTime ->
+        if model.isCounting then
+          ({ model | secondsElapsed = model.secondsElapsed + 1 }, Cmd.none)
+        else
+          (model, Cmd.none)
+      Restart ->
+        (Model 0 False (Grid.create gridHeight gridWidth), Cmd.none)
+      Flag y x ->
+        ({ model | grid = Grid.flag y x model.grid }, Cmd.none)
+      Plant y x ->
+        (model, Random.generate (\newGrid -> SetPlanted newGrid y x) (Grid.plantBombs y x bombCount model.grid))
+      SetPlanted newGrid y x ->
+        case Grid.get y x newGrid of
+          Nothing -> (model, Cmd.none)
+          Just cell ->
+            if cell.hasBomb then
+              (model, Random.generate (\yetAnotherGrid -> SetPlanted yetAnotherGrid y x) (Grid.plantBombs y x bombCount model.grid))
+            else
+              ({ model | grid = Grid.uncoverAll y x newGrid, isCounting = True }, Cmd.none)
+      Clear y x ->
+        let
+          newGrid = Grid.uncoverAll y x model.grid
+          isBombed = Grid.isBombed newGrid
+          isWin = Grid.isWin newGrid
+          isCounting = not (isBombed || isWin)
+        in
+          ({ model | grid = newGrid, isCounting = isCounting }, Cmd.none)
+      NeighborClear y x ->
+        ({ model | grid = Grid.neighborClear y x model.grid }, Cmd.none)
 
 -- VIEW
 
@@ -87,7 +101,7 @@ view { secondsElapsed, grid } =
         , div [class "grid-wrapper"]
         [ div [class "grid-head"]
           [ span [class "grid-remaining"] [ text (leftPad "0" 3 (remaining isWin remainingCount)) ]
-          , span [class "grid-time"] [ text (leftPad "0" 3 secondsElapsed) ]
+          , span [class "grid-time"] [ text (leftPadMax "0" 3 secondsElapsed 999) ]
           , face isBombed isWin
           ]
         , tgrid isBombed noneUncovered isWin grid
@@ -114,6 +128,13 @@ remaining isWin remaining =
     toString bombCount
   else
     toString remaining
+
+leftPadMax : String -> Int -> Int -> Int -> String
+leftPadMax padder width n maximum =
+  let
+    maxxed = toString (min n maximum)
+  in
+    leftPad padder width maxxed
 
 leftPad : String -> Int -> String -> String
 leftPad padder width str =
@@ -219,4 +240,4 @@ getCellContents cell count isBombed =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
+  Time.every second Tick
