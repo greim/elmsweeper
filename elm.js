@@ -9052,122 +9052,62 @@ var _user$project$BombIndex$create = F3(
 			shuffler);
 	});
 
-var _user$project$Queue$toList = function (queue) {
-	var _p0 = queue;
-	switch (_p0.ctor) {
-		case 'Empty':
-			return _elm_lang$core$Native_List.fromArray(
-				[]);
-		case 'Mono':
-			return _elm_lang$core$Native_List.fromArray(
-				[_p0._0]);
-		default:
-			return A2(
-				_elm_lang$core$List$append,
-				A2(
-					_elm_lang$core$List_ops['::'],
-					_p0._0,
-					_user$project$Queue$toList(_p0._1)),
-				_elm_lang$core$Native_List.fromArray(
-					[_p0._2]));
-	}
-};
 var _user$project$Queue$length = function (queue) {
-	var _p1 = queue;
-	switch (_p1.ctor) {
-		case 'Empty':
-			return 0;
-		case 'Mono':
-			return 1;
-		default:
-			return 2 + _user$project$Queue$length(_p1._1);
-	}
+	return _elm_lang$core$List$length(queue.inq) + _elm_lang$core$List$length(queue.outq);
 };
-var _user$project$Queue$peek = function (queue) {
-	var _p2 = queue;
-	switch (_p2.ctor) {
-		case 'Empty':
-			return _elm_lang$core$Maybe$Nothing;
-		case 'Mono':
-			return _elm_lang$core$Maybe$Just(_p2._0);
-		default:
-			return _elm_lang$core$Maybe$Just(_p2._0);
-	}
-};
-var _user$project$Queue$Multi = F3(
-	function (a, b, c) {
-		return {ctor: 'Multi', _0: a, _1: b, _2: c};
-	});
-var _user$project$Queue$Mono = function (a) {
-	return {ctor: 'Mono', _0: a};
-};
-var _user$project$Queue$singleton = function (a) {
-	return _user$project$Queue$Mono(a);
-};
-var _user$project$Queue$Empty = {ctor: 'Empty'};
-var _user$project$Queue$enq = F2(
-	function (val, queue) {
-		var _p3 = queue;
-		switch (_p3.ctor) {
-			case 'Empty':
-				return _user$project$Queue$Mono(val);
-			case 'Mono':
-				return A3(_user$project$Queue$Multi, _p3._0, _user$project$Queue$Empty, val);
-			default:
-				return A3(
-					_user$project$Queue$Multi,
-					_p3._0,
-					A2(_user$project$Queue$enq, _p3._2, _p3._1),
-					val);
-		}
-	});
 var _user$project$Queue$enqAll = F2(
 	function (things, queue) {
-		enqAll:
-		while (true) {
-			var _p4 = things;
-			if (_p4.ctor === '::') {
-				var _v5 = _p4._1,
-					_v6 = A2(_user$project$Queue$enq, _p4._0, queue);
-				things = _v5;
-				queue = _v6;
-				continue enqAll;
-			} else {
-				return queue;
-			}
-		}
+		return _elm_lang$core$Native_Utils.update(
+			queue,
+			{
+				inq: A2(_elm_lang$core$List$append, things, queue.inq)
+			});
 	});
+var _user$project$Queue$enq = F2(
+	function (val, queue) {
+		return _elm_lang$core$Native_Utils.update(
+			queue,
+			{
+				inq: A2(_elm_lang$core$List_ops['::'], val, queue.inq)
+			});
+	});
+var _user$project$Queue$Queue = F2(
+	function (a, b) {
+		return {inq: a, outq: b};
+	});
+var _user$project$Queue$singleton = function (a) {
+	return A2(
+		_user$project$Queue$Queue,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[a]));
+};
 var _user$project$Queue$deq = function (queue) {
-	var _p5 = queue;
-	switch (_p5.ctor) {
-		case 'Empty':
-			return {ctor: '_Tuple2', _0: _elm_lang$core$Maybe$Nothing, _1: _user$project$Queue$Empty};
-		case 'Mono':
+	var _p0 = queue.outq;
+	if (_p0.ctor === '[]') {
+		var _p1 = _elm_lang$core$List$reverse(queue.inq);
+		if (_p1.ctor === '::') {
 			return {
 				ctor: '_Tuple2',
-				_0: _elm_lang$core$Maybe$Just(_p5._0),
-				_1: _user$project$Queue$Empty
+				_0: _elm_lang$core$Maybe$Just(_p1._0),
+				_1: A2(
+					_user$project$Queue$Queue,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_p1._1)
 			};
-		default:
-			var _p9 = _p5._0;
-			var _p8 = _p5._2;
-			var _p6 = _user$project$Queue$deq(_p5._1);
-			var maybeNewFront = _p6._0;
-			var newMidQueue = _p6._1;
-			var _p7 = maybeNewFront;
-			if (_p7.ctor === 'Nothing') {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Maybe$Just(_p9),
-					_1: _user$project$Queue$Mono(_p8)
-				};
-			} else {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Maybe$Just(_p9),
-					_1: A3(_user$project$Queue$Multi, _p7._0, newMidQueue, _p8)
-				};
-			}
+		} else {
+			return {ctor: '_Tuple2', _0: _elm_lang$core$Maybe$Nothing, _1: queue};
+		}
+	} else {
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Maybe$Just(_p0._0),
+			_1: _elm_lang$core$Native_Utils.update(
+				queue,
+				{outq: _p0._1})
+		};
 	}
 };
 
