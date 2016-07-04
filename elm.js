@@ -10181,24 +10181,6 @@ var _user$project$Main$view = function (_p9) {
 								A2(_user$project$Main$face, isBombed, isWin)
 							])),
 						A4(_user$project$Main$tgrid, isBombed, noneUncovered, isWin, _p11)
-					])),
-				A2(
-				_elm_lang$html$Html$p,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Github: '),
-						A2(
-						_elm_lang$html$Html$a,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$href('https://github.com/greim/elmsweeper')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('github.com/greim/elmsweeper')
-							]))
 					]))
 			]));
 };
