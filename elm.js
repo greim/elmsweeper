@@ -9832,10 +9832,6 @@ var _user$project$Main$leftPadMax = F4(
 		return A3(_user$project$Main$leftPad, padder, width, maxxed);
 	});
 var _user$project$Main$bombCount = 99;
-var _user$project$Main$remaining = F2(
-	function (isWin, remaining) {
-		return isWin ? '0' : (_elm_lang$core$Native_Utils.eq(remaining, 0) ? _elm_lang$core$Basics$toString(_user$project$Main$bombCount) : _elm_lang$core$Basics$toString(remaining));
-	});
 var _user$project$Main$statusText = F3(
 	function (isBombed, isWin, remaining) {
 		return isBombed ? 'Lose!' : (isWin ? 'Win!' : (_elm_lang$core$Native_Utils.eq(remaining, 0) ? A2(
@@ -10165,7 +10161,7 @@ var _user$project$Main$view = function (_p9) {
 											_user$project$Main$leftPad,
 											'0',
 											3,
-											A2(_user$project$Main$remaining, isWin, remainingCount)))
+											_elm_lang$core$Basics$toString(remainingCount)))
 									])),
 								A2(
 								_elm_lang$html$Html$span,

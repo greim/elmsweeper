@@ -37,6 +37,9 @@ init =
 gridHeight = 16
 gridWidth = 30
 bombCount = 99
+--gridHeight = 8
+--gridWidth = 8
+--bombCount = 3
 
 -- UPDATE
 
@@ -106,7 +109,7 @@ view { secondsElapsed, grid } =
       [ h1 [] [text "ELMSWEEPER"]
         , div [class "grid-wrapper"]
         [ div [class "grid-head"]
-          [ span [class "grid-remaining"] [ text (leftPad "0" 3 (remaining isWin remainingCount)) ]
+          [ span [class "grid-remaining"] [ text (leftPad "0" 3 (toString remainingCount)) ]
           , span [class "grid-time"] [ text (leftPadMax "0" 3 secondsElapsed 999) ]
           , face isBombed isWin
           ]
@@ -121,15 +124,6 @@ face isBombed isWin =
     span [class "face sad", onClick Restart] []
   else
     span [class "face happy", onClick Restart] []
-
-remaining : Bool -> Int -> String
-remaining isWin remaining =
-  if isWin then
-    "0"
-  else if remaining == 0 then
-    toString bombCount
-  else
-    toString remaining
 
 leftPadMax : String -> Int -> Int -> Int -> String
 leftPadMax padder width n maximum =
