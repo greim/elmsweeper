@@ -378,37 +378,36 @@ plantBombsRecurs bombIndex grid =
       in
         plantBombsRecurs rest newGrid
 
-setBomb : Int -> Int -> Bool -> Grid -> Grid
-setBomb y x isBomb grid =
+set : Int -> Int -> Cell -> Grid -> Grid
+set y x newCell grid =
   case Array.get y grid of
-    Just row ->
-      Array.set y (setBombInRow x isBomb row) grid
     Nothing ->
       grid
+    Just oldRow ->
+      case Array.get x oldRow of
+        Nothing ->
+          grid
+        Just oldCell ->
+          let
+            newRow = Array.set x newCell oldRow
+          in
+            Array.set y newRow grid
 
-setBombInRow : Int -> Bool -> Row -> Row
-setBombInRow x isBomb row =
-  case Array.get x row of
-    Just cell ->
-      Array.set x { cell | hasBomb = isBomb } row
+setBomb : Int -> Int -> Bool -> Grid -> Grid
+setBomb y x isBomb grid =
+  case get y x grid of
     Nothing ->
-      row
+      grid
+    Just cell ->
+      set y x { cell | hasBomb = isBomb } grid
 
 setStatus : Int -> Int -> CellStatus -> Grid -> Grid
 setStatus y x status grid =
-  case Array.get y grid of
-    Just row ->
-      Array.set y (setStatusInRow x status row) grid
+  case get y x grid of
     Nothing ->
       grid
-
-setStatusInRow : Int -> CellStatus -> Row -> Row
-setStatusInRow x status row =
-  case Array.get x row of
     Just cell ->
-      Array.set x { cell | status = status } row
-    Nothing ->
-      row
+      set y x { cell | status = status } grid
 
 shift : Array a -> (Maybe a, Array a)
 shift arr =
