@@ -9746,29 +9746,21 @@ var _user$project$Grid$neighborClear = F3(
 
 var _user$project$Main$getCellContents = F3(
 	function (cell, count, isBombed) {
-		var _p0 = cell.status;
-		switch (_p0.ctor) {
-			case 'Cleared':
-				return cell.hasBomb ? _elm_lang$html$Html$text('') : ((_elm_lang$core$Native_Utils.cmp(count, 0) > 0) ? A2(
-					_elm_lang$html$Html$strong,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html_Attributes$class(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'number n',
-								_elm_lang$core$Basics$toString(count)))
-						]),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(count))
-						])) : _elm_lang$html$Html$text(''));
-			case 'Flagged':
-				return _elm_lang$html$Html$text('');
-			default:
-				return (isBombed && cell.hasBomb) ? _elm_lang$html$Html$text('') : _elm_lang$html$Html$text('');
-		}
+		return (_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Cleared) && (_elm_lang$core$Native_Utils.cmp(count, 0) > 0)) ? A2(
+			_elm_lang$html$Html$strong,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'number n',
+						_elm_lang$core$Basics$toString(count)))
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text(
+					_elm_lang$core$Basics$toString(count))
+				])) : _elm_lang$html$Html$text('');
 	});
 var _user$project$Main$cellBaseClasses = _elm_lang$core$Native_List.fromArray(
 	[
@@ -9823,12 +9815,12 @@ var _user$project$Main$leftPad = F3(
 				width) > -1) {
 				return str;
 			} else {
-				var _v1 = padder,
-					_v2 = width,
-					_v3 = A2(_elm_lang$core$Basics_ops['++'], padder, str);
-				padder = _v1;
-				width = _v2;
-				str = _v3;
+				var _v0 = padder,
+					_v1 = width,
+					_v2 = A2(_elm_lang$core$Basics_ops['++'], padder, str);
+				padder = _v0;
+				width = _v1;
+				str = _v2;
 				continue leftPad;
 			}
 		}
@@ -9924,8 +9916,8 @@ var _user$project$Main$SetPlanted = F3(
 	});
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
 			case 'None':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'Tick':
@@ -9952,53 +9944,53 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							grid: A3(_user$project$Grid$flag, _p1._0, _p1._1, model.grid)
+							grid: A3(_user$project$Grid$flag, _p0._0, _p0._1, model.grid)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Plant':
-				var _p3 = _p1._0;
-				var _p2 = _p1._1;
+				var _p2 = _p0._0;
+				var _p1 = _p0._1;
 				return {
 					ctor: '_Tuple2',
 					_0: model,
 					_1: A2(
 						_elm_lang$core$Random$generate,
 						function (newGrid) {
-							return A3(_user$project$Main$SetPlanted, newGrid, _p3, _p2);
+							return A3(_user$project$Main$SetPlanted, newGrid, _p2, _p1);
 						},
-						A4(_user$project$Grid$plantBombs, _p3, _p2, _user$project$Main$bombCount, model.grid))
+						A4(_user$project$Grid$plantBombs, _p2, _p1, _user$project$Main$bombCount, model.grid))
 				};
 			case 'SetPlanted':
-				var _p7 = _p1._1;
-				var _p6 = _p1._2;
-				var _p5 = _p1._0;
-				var _p4 = A3(_user$project$Grid$get, _p7, _p6, _p5);
-				if (_p4.ctor === 'Nothing') {
+				var _p6 = _p0._1;
+				var _p5 = _p0._2;
+				var _p4 = _p0._0;
+				var _p3 = A3(_user$project$Grid$get, _p6, _p5, _p4);
+				if (_p3.ctor === 'Nothing') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
-					return _p4._0.hasBomb ? {
+					return _p3._0.hasBomb ? {
 						ctor: '_Tuple2',
 						_0: model,
 						_1: A2(
 							_elm_lang$core$Random$generate,
 							function (yetAnotherGrid) {
-								return A3(_user$project$Main$SetPlanted, yetAnotherGrid, _p7, _p6);
+								return A3(_user$project$Main$SetPlanted, yetAnotherGrid, _p6, _p5);
 							},
-							A4(_user$project$Grid$plantBombs, _p7, _p6, _user$project$Main$bombCount, model.grid))
+							A4(_user$project$Grid$plantBombs, _p6, _p5, _user$project$Main$bombCount, model.grid))
 					} : {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								grid: A3(_user$project$Grid$uncoverAll, _p7, _p6, _p5),
+								grid: A3(_user$project$Grid$uncoverAll, _p6, _p5, _p4),
 								isCounting: true
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				}
 			case 'Clear':
-				var newGrid = A3(_user$project$Grid$uncoverAll, _p1._0, _p1._1, model.grid);
+				var newGrid = A3(_user$project$Grid$uncoverAll, _p0._0, _p0._1, model.grid);
 				var isBombed = _user$project$Grid$isBombed(newGrid);
 				var isWin = _user$project$Grid$isWin(newGrid);
 				var isCounting = _elm_lang$core$Basics$not(isBombed || isWin);
@@ -10015,7 +10007,7 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							grid: A3(_user$project$Grid$neighborClear, _p1._0, _p1._1, model.grid)
+							grid: A3(_user$project$Grid$neighborClear, _p0._0, _p0._1, model.grid)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -10031,8 +10023,8 @@ var _user$project$Main$Flag = F2(
 	});
 var _user$project$Main$handleButton = F3(
 	function (y, x, evButtons) {
-		var _p8 = evButtons;
-		switch (_p8) {
+		var _p7 = evButtons;
+		switch (_p7) {
 			case 2:
 				return _elm_lang$core$Result$Ok(
 					A2(_user$project$Main$Flag, y, x));
@@ -10070,8 +10062,8 @@ var _user$project$Main$onCellClick2 = F6(
 var _user$project$Main$tcell = F7(
 	function (isBombed, noneUncovered, isWin, grid, y, x, cell) {
 		var classes = function () {
-			var _p9 = cell.status;
-			switch (_p9.ctor) {
+			var _p8 = cell.status;
+			switch (_p8.ctor) {
 				case 'Cleared':
 					return cell.hasBomb ? _user$project$Main$cellBombedClasses : _user$project$Main$cellClearedClasses;
 				case 'Flagged':
@@ -10121,13 +10113,13 @@ var _user$project$Main$tgrid = F4(
 				A4(_user$project$Main$trow, isBombed, noneUncovered, isWin, grid),
 				grid));
 	});
-var _user$project$Main$view = function (_p10) {
-	var _p11 = _p10;
-	var _p12 = _p11.grid;
-	var remainingCount = _user$project$Grid$unclearedMineCount(_p12);
-	var noneUncovered = _user$project$Grid$noneUncovered(_p12);
-	var isWin = _user$project$Grid$isWin(_p12);
-	var isBombed = _user$project$Grid$isBombed(_p12);
+var _user$project$Main$view = function (_p9) {
+	var _p10 = _p9;
+	var _p11 = _p10.grid;
+	var remainingCount = _user$project$Grid$unclearedMineCount(_p11);
+	var noneUncovered = _user$project$Grid$noneUncovered(_p11);
+	var isWin = _user$project$Grid$isWin(_p11);
+	var isBombed = _user$project$Grid$isBombed(_p11);
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -10182,11 +10174,11 @@ var _user$project$Main$view = function (_p10) {
 								_elm_lang$core$Native_List.fromArray(
 									[
 										_elm_lang$html$Html$text(
-										A4(_user$project$Main$leftPadMax, '0', 3, _p11.secondsElapsed, 999))
+										A4(_user$project$Main$leftPadMax, '0', 3, _p10.secondsElapsed, 999))
 									])),
 								A2(_user$project$Main$face, isBombed, isWin)
 							])),
-						A4(_user$project$Main$tgrid, isBombed, noneUncovered, isWin, _p12)
+						A4(_user$project$Main$tgrid, isBombed, noneUncovered, isWin, _p11)
 					])),
 				A2(
 				_elm_lang$html$Html$p,

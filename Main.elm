@@ -196,8 +196,6 @@ killContext =
   onWithOptions "contextmenu" { stopPropagation = False, preventDefault = True } (Decode.succeed None)
 
 
-
-
 onCellClick2 : Bool -> Bool ->  Bool -> Int -> Int -> Cell -> Html.Attribute Msg
 onCellClick2 isBombed noneUncovered isWin y x cell =
   if noneUncovered then
@@ -233,21 +231,10 @@ cellCoveredClasses = classList (List.append [("covered",True)] cellBaseClasses)
 
 getCellContents : Cell -> Int -> Bool -> Html Msg
 getCellContents cell count isBombed =
-  case cell.status of
-    Grid.Cleared ->
-      if cell.hasBomb then
-        text ""
-      else if count > 0 then
-        strong [class ("number n" ++ (toString count))] [text (toString count)]
-      else
-        text ""
-    Grid.Flagged ->
-      text ""
-    Grid.Covered ->
-      if isBombed && cell.hasBomb then
-        text ""
-      else
-        text ""
+  if cell.status == Grid.Cleared && count > 0 then
+    strong [class ("number n" ++ (toString count))] [text (toString count)]
+  else
+    text ""
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
