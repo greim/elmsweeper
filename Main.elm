@@ -83,7 +83,13 @@ update msg model =
         in
           ({ model | grid = newGrid, isCounting = isCounting }, Cmd.none)
       NeighborClear y x ->
-        ({ model | grid = Grid.neighborClear y x model.grid }, Cmd.none)
+        let
+          newGrid = Grid.neighborClear y x model.grid
+          isBombed = Grid.isBombed newGrid
+          isWin = Grid.isWin newGrid
+          isCounting = not (isBombed || isWin)
+        in
+          ({ model | grid = newGrid, isCounting = isCounting }, Cmd.none)
 
 -- VIEW
 
@@ -231,7 +237,7 @@ cellCoveredClasses = classList (List.append [("covered",True)] cellBaseClasses)
 
 getCellContents : Cell -> Int -> Bool -> Html Msg
 getCellContents cell count isBombed =
-  if cell.status == Grid.Cleared && count > 0 then
+  if (not cell.hasBomb) && cell.status == Grid.Cleared && count > 0 then
     strong [class ("number n" ++ (toString count))] [text (toString count)]
   else
     text ""

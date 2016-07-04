@@ -9746,7 +9746,7 @@ var _user$project$Grid$neighborClear = F3(
 
 var _user$project$Main$getCellContents = F3(
 	function (cell, count, isBombed) {
-		return (_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Cleared) && (_elm_lang$core$Native_Utils.cmp(count, 0) > 0)) ? A2(
+		return (_elm_lang$core$Basics$not(cell.hasBomb) && (_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Cleared) && (_elm_lang$core$Native_Utils.cmp(count, 0) > 0))) ? A2(
 			_elm_lang$html$Html$strong,
 			_elm_lang$core$Native_List.fromArray(
 				[
@@ -10002,13 +10002,15 @@ var _user$project$Main$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
+				var newGrid = A3(_user$project$Grid$neighborClear, _p0._0, _p0._1, model.grid);
+				var isBombed = _user$project$Grid$isBombed(newGrid);
+				var isWin = _user$project$Grid$isWin(newGrid);
+				var isCounting = _elm_lang$core$Basics$not(isBombed || isWin);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							grid: A3(_user$project$Grid$neighborClear, _p0._0, _p0._1, model.grid)
-						}),
+						{grid: newGrid, isCounting: isCounting}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
