@@ -100,7 +100,7 @@ view { secondsElapsed, grid } =
     isBombed = Grid.isBombed grid
     isWin = Grid.isWin grid
     noneUncovered = Grid.noneUncovered grid
-    remainingCount = Grid.unclearedMineCount grid
+    remainingCount = bombCount - (Grid.flagCount grid)
   in
     div []
       [ h1 [] [text "ELMSWEEPER"]

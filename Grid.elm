@@ -1,4 +1,4 @@
-module Grid exposing (Grid, CellStatus(..), Row, Cell, uncoverAll, create, isBombed, noneUncovered, rowMap, cellMap, countNeighborMines, plantBombs, get, flag, neighborClear, isWin, unclearedMineCount)
+module Grid exposing (Grid, CellStatus(..), Row, Cell, uncoverAll, create, isBombed, noneUncovered, rowMap, cellMap, countNeighborMines, plantBombs, get, flag, neighborClear, isWin, flagCount)
 
 ----------------------------------------
 -- imports
@@ -63,6 +63,10 @@ flag y x grid =
         Cleared ->
           grid
 
+flagCount : Grid -> Int
+flagCount grid =
+  Array.foldl flagReducer 0 grid
+
 get : Int -> Int -> Grid -> Maybe Cell
 get y x grid =
   case Array.get y grid of
@@ -116,10 +120,6 @@ plantBombs yOrigin xOrigin bombCount grid =
 rowMap : (Int -> Row -> a) -> Grid -> List a
 rowMap fn grid =
   mapc fn grid
-
-unclearedMineCount : Grid -> Int
-unclearedMineCount grid =
-  Array.foldl unclearedReducer 0 grid
 
 uncoverAll : Int -> Int -> Grid -> Grid
 uncoverAll y x grid =
@@ -417,13 +417,13 @@ shift arr =
     Nothing ->
       (Nothing, arr)
 
-unclearedReducer : Row -> Int -> Int
-unclearedReducer row tally =
-  Array.foldl unclearedRowReducer tally row
+flagReducer : Row -> Int -> Int
+flagReducer row tally =
+  Array.foldl flagRowReducer tally row
 
-unclearedRowReducer : Cell -> Int -> Int
-unclearedRowReducer cell tally =
-  if cell.status == Covered && cell.hasBomb then
+flagRowReducer : Cell -> Int -> Int
+flagRowReducer cell tally =
+  if cell.status == Flagged then
     tally + 1
   else
     tally

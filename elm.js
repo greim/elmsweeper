@@ -9599,17 +9599,6 @@ var _user$project$Grid$create = F2(
 				return A2(_user$project$Grid$createRow, y, xLen);
 			});
 	});
-var _user$project$Grid$unclearedRowReducer = F2(
-	function (cell, tally) {
-		return (_elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Covered) && cell.hasBomb) ? (tally + 1) : tally;
-	});
-var _user$project$Grid$unclearedReducer = F2(
-	function (row, tally) {
-		return A3(_elm_lang$core$Array$foldl, _user$project$Grid$unclearedRowReducer, tally, row);
-	});
-var _user$project$Grid$unclearedMineCount = function (grid) {
-	return A3(_elm_lang$core$Array$foldl, _user$project$Grid$unclearedReducer, 0, grid);
-};
 var _user$project$Grid$Flagged = {ctor: 'Flagged'};
 var _user$project$Grid$flag = F3(
 	function (y, x, grid) {
@@ -9647,6 +9636,17 @@ var _user$project$Grid$neighborFlagCount = F3(
 		var neighbors = A3(_user$project$Grid$getNeighbors, y, x, grid);
 		return A3(_elm_lang$core$List$foldl, fn, 0, neighbors);
 	});
+var _user$project$Grid$flagRowReducer = F2(
+	function (cell, tally) {
+		return _elm_lang$core$Native_Utils.eq(cell.status, _user$project$Grid$Flagged) ? (tally + 1) : tally;
+	});
+var _user$project$Grid$flagReducer = F2(
+	function (row, tally) {
+		return A3(_elm_lang$core$Array$foldl, _user$project$Grid$flagRowReducer, tally, row);
+	});
+var _user$project$Grid$flagCount = function (grid) {
+	return A3(_elm_lang$core$Array$foldl, _user$project$Grid$flagReducer, 0, grid);
+};
 var _user$project$Grid$Cleared = {ctor: 'Cleared'};
 var _user$project$Grid$isBombed = function (grid) {
 	return _elm_lang$core$Basics$not(
@@ -10118,7 +10118,7 @@ var _user$project$Main$tgrid = F4(
 var _user$project$Main$view = function (_p9) {
 	var _p10 = _p9;
 	var _p11 = _p10.grid;
-	var remainingCount = _user$project$Grid$unclearedMineCount(_p11);
+	var remainingCount = _user$project$Main$bombCount - _user$project$Grid$flagCount(_p11);
 	var noneUncovered = _user$project$Grid$noneUncovered(_p11);
 	var isWin = _user$project$Grid$isWin(_p11);
 	var isBombed = _user$project$Grid$isBombed(_p11);
