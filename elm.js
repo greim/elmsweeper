@@ -10019,43 +10019,51 @@ var _user$project$Main$Flag = F2(
 	function (a, b) {
 		return {ctor: 'Flag', _0: a, _1: b};
 	});
-var _user$project$Main$handleButton = F3(
-	function (y, x, evButtons) {
-		var _p7 = evButtons;
-		switch (_p7) {
-			case 2:
-				return _elm_lang$core$Result$Ok(
-					A2(_user$project$Main$Flag, y, x));
-			case 3:
-				return _elm_lang$core$Result$Ok(
-					A2(_user$project$Main$NeighborClear, y, x));
-			default:
-				return _elm_lang$core$Result$Ok(
-					A2(_user$project$Main$Clear, y, x));
+var _user$project$Main$handleButton = F4(
+	function (isPlant, y, x, evButtons) {
+		if (isPlant) {
+			return _elm_lang$core$Result$Ok(
+				A2(_user$project$Main$Plant, y, x));
+		} else {
+			var _p7 = evButtons;
+			switch (_p7) {
+				case 2:
+					return _elm_lang$core$Result$Ok(
+						A2(_user$project$Main$Flag, y, x));
+				case 3:
+					return _elm_lang$core$Result$Ok(
+						A2(_user$project$Main$NeighborClear, y, x));
+				default:
+					return _elm_lang$core$Result$Ok(
+						A2(_user$project$Main$Clear, y, x));
+			}
 		}
 	});
-var _user$project$Main$buttonInfo = F3(
-	function (y, x, evDecoder) {
+var _user$project$Main$buttonInfo = F4(
+	function (isPlant, y, x, evDecoder) {
 		return A2(
 			_elm_lang$core$Json_Decode$customDecoder,
 			evDecoder,
-			A2(_user$project$Main$handleButton, y, x));
+			A3(_user$project$Main$handleButton, isPlant, y, x));
 	});
-var _user$project$Main$decodeCellClickEvent = F2(
-	function (y, x) {
-		return A3(
+var _user$project$Main$decodeCellClickEvent = F3(
+	function (isPlant, y, x) {
+		return A4(
 			_user$project$Main$buttonInfo,
+			isPlant,
 			y,
 			x,
 			A2(_elm_lang$core$Json_Decode_ops[':='], 'buttons', _elm_lang$core$Json_Decode$int));
 	});
 var _user$project$Main$onCellClick2 = F6(
 	function (isBombed, noneUncovered, isWin, y, x, cell) {
-		return noneUncovered ? _elm_lang$html$Html_Events$onClick(
-			A2(_user$project$Main$Plant, y, x)) : ((isBombed || isWin) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$None) : A2(
+		return noneUncovered ? A2(
 			_elm_lang$html$Html_Events$on,
 			'mousedown',
-			A2(_user$project$Main$decodeCellClickEvent, y, x)));
+			A3(_user$project$Main$decodeCellClickEvent, true, y, x)) : ((isBombed || isWin) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$None) : A2(
+			_elm_lang$html$Html_Events$on,
+			'mousedown',
+			A3(_user$project$Main$decodeCellClickEvent, false, y, x)));
 	});
 var _user$project$Main$tcell = F7(
 	function (isBombed, noneUncovered, isWin, grid, y, x, cell) {

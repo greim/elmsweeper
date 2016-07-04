@@ -184,27 +184,30 @@ killContext =
 onCellClick2 : Bool -> Bool ->  Bool -> Int -> Int -> Cell -> Html.Attribute Msg
 onCellClick2 isBombed noneUncovered isWin y x cell =
   if noneUncovered then
-    onClick (Plant y x)
+    on "mousedown" (decodeCellClickEvent True y x)
   else
     if isBombed || isWin then
       onClick None
     else
-      on "mousedown" (decodeCellClickEvent y x)
+      on "mousedown" (decodeCellClickEvent False y x)
 
-decodeCellClickEvent : Int -> Int -> Decoder Msg
-decodeCellClickEvent y x =
-  ("buttons" := Decode.int) |> (buttonInfo y x)
+decodeCellClickEvent : Bool -> Int -> Int -> Decoder Msg
+decodeCellClickEvent isPlant y x =
+  ("buttons" := Decode.int) |> (buttonInfo isPlant y x)
 
-buttonInfo : Int -> Int -> Decoder Int -> Decoder Msg
-buttonInfo y x evDecoder =
-  Decode.customDecoder evDecoder (handleButton y x)
+buttonInfo : Bool -> Int -> Int -> Decoder Int -> Decoder Msg
+buttonInfo isPlant y x evDecoder =
+  Decode.customDecoder evDecoder (handleButton isPlant y x)
 
-handleButton : Int -> Int -> Int -> Result String Msg
-handleButton y x evButtons =
-  case evButtons of
-    2 -> Ok (Flag y x)
-    3 -> Ok (NeighborClear y x)
-    _ -> Ok (Clear y x)
+handleButton : Bool -> Int -> Int -> Int -> Result String Msg
+handleButton isPlant y x evButtons =
+  if isPlant then
+    Ok (Plant y x)
+  else
+    case evButtons of
+      2 -> Ok (Flag y x)
+      3 -> Ok (NeighborClear y x)
+      _ -> Ok (Clear y x)
 
 
 cellBaseClasses = [("grid-cell",True)]
