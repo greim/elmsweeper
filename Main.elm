@@ -116,17 +116,6 @@ view { secondsElapsed, grid } =
         [ text "Github: "
         , Html.a [Html.Attributes.href "https://github.com/greim/elmsweeper"] [text "github.com/greim/elmsweeper"]
         ]
-        , Html.p []
-        [ Html.a
-          [ href "https://twitter.com/share"
-          , class "twitter-share-button"
-          , attribute "data-url" "https://greim.github.io/elmsweeper/"
-          , attribute "data-text" "Elmsweeper: Minesweeper in Elm."
-          , attribute "data-via" "greim"
-          , attribute "data-size" "large"
-          , attribute "data-hashtags" "elmlang"
-          ] [text "Tweet"]
-        ]
       ]
 
 face isBombed isWin =

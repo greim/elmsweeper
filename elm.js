@@ -10199,29 +10199,6 @@ var _user$project$Main$view = function (_p9) {
 							[
 								_elm_lang$html$Html$text('github.com/greim/elmsweeper')
 							]))
-					])),
-				A2(
-				_elm_lang$html$Html$p,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$a,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$href('https://twitter.com/share'),
-								_elm_lang$html$Html_Attributes$class('twitter-share-button'),
-								A2(_elm_lang$html$Html_Attributes$attribute, 'data-url', 'https://greim.github.io/elmsweeper/'),
-								A2(_elm_lang$html$Html_Attributes$attribute, 'data-text', 'Elmsweeper: Minesweeper in Elm.'),
-								A2(_elm_lang$html$Html_Attributes$attribute, 'data-via', 'greim'),
-								A2(_elm_lang$html$Html_Attributes$attribute, 'data-size', 'large'),
-								A2(_elm_lang$html$Html_Attributes$attribute, 'data-hashtags', 'elmlang')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('Tweet')
-							]))
 					]))
 			]));
 };
