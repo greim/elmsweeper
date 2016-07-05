@@ -25,11 +25,12 @@ type alias Model =
   { secondsElapsed : Int
   , isCounting : Bool
   , grid : Grid
+  , prev : List Grid
   }
 
 init : (Model, Cmd Msg)
 init =
-  ( Model 0 False (Grid.create gridHeight gridWidth)
+  ( Model 0 False (Grid.create gridHeight gridWidth) []
   , Cmd.none
   )
 
@@ -52,19 +53,27 @@ type Msg
   | NeighborClear Int Int
   | Restart
   | Tick Time
+  | Back
   | None
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-      None -> (model, Cmd.none)
+      None ->
+        (model, Cmd.none)
+      Back ->
+        case model.prev of
+          hd::tl ->
+            ({ model | grid = hd, prev = tl }, Cmd.none)
+          [] ->
+            (model, Cmd.none)
       Tick newTime ->
         if model.isCounting then
           ({ model | secondsElapsed = model.secondsElapsed + 1 }, Cmd.none)
         else
           (model, Cmd.none)
       Restart ->
-        (Model 0 False (Grid.create gridHeight gridWidth), Cmd.none)
+        (Model 0 False (Grid.create gridHeight gridWidth) [], Cmd.none)
       Flag y x ->
         ({ model | grid = Grid.flag y x model.grid }, Cmd.none)
       Plant y x ->
@@ -82,9 +91,12 @@ update msg model =
           newGrid = Grid.uncoverAll y x model.grid
           isBombed = Grid.isBombed newGrid
           isWin = Grid.isWin newGrid
-          isCounting = not (isBombed || isWin)
         in
-          ({ model | grid = newGrid, isCounting = isCounting }, Cmd.none)
+          ({ model
+            | grid = newGrid
+            , isCounting = not (isBombed || isWin)
+            , prev = model.grid :: model.prev
+            }, Cmd.none)
       NeighborClear y x ->
         let
           newGrid = Grid.neighborClear y x model.grid
@@ -92,7 +104,11 @@ update msg model =
           isWin = Grid.isWin newGrid
           isCounting = not (isBombed || isWin)
         in
-          ({ model | grid = newGrid, isCounting = isCounting }, Cmd.none)
+          ({ model
+            | grid = newGrid
+            , isCounting = not (isBombed || isWin)
+            , prev = model.grid :: model.prev
+            }, Cmd.none)
 
 -- VIEW
 
@@ -110,7 +126,7 @@ view { secondsElapsed, grid } =
         , div [class "grid-wrapper"]
         [ div [class "grid-head"]
           [ span [class "grid-remaining"] [ text (leftPad "0" 3 (toString remainingCount)) ]
-          , span [class "grid-time"] [ text (leftPadMax "0" 3 secondsElapsed 999) ]
+          , span [class "grid-time", title "undo"] [ text (leftPadMax "0" 3 secondsElapsed 999) ]
           , face isBombed isWin
           ]
         , tgrid isBombed noneUncovered isWin grid

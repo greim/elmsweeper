@@ -9844,17 +9844,19 @@ var _user$project$Main$statusText = F3(
 	});
 var _user$project$Main$gridWidth = 30;
 var _user$project$Main$gridHeight = 16;
-var _user$project$Main$Model = F3(
-	function (a, b, c) {
-		return {secondsElapsed: a, isCounting: b, grid: c};
+var _user$project$Main$Model = F4(
+	function (a, b, c, d) {
+		return {secondsElapsed: a, isCounting: b, grid: c, prev: d};
 	});
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: A3(
+	_0: A4(
 		_user$project$Main$Model,
 		0,
 		false,
-		A2(_user$project$Grid$create, _user$project$Main$gridHeight, _user$project$Main$gridWidth)),
+		A2(_user$project$Grid$create, _user$project$Main$gridHeight, _user$project$Main$gridWidth),
+		_elm_lang$core$Native_List.fromArray(
+			[])),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$Main$None = {ctor: 'None'};
@@ -9863,6 +9865,7 @@ var _user$project$Main$killContext = A3(
 	'contextmenu',
 	{stopPropagation: false, preventDefault: true},
 	_elm_lang$core$Json_Decode$succeed(_user$project$Main$None));
+var _user$project$Main$Back = {ctor: 'Back'};
 var _user$project$Main$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
 };
@@ -9916,6 +9919,19 @@ var _user$project$Main$update = F2(
 		switch (_p0.ctor) {
 			case 'None':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'Back':
+				var _p1 = model.prev;
+				if (_p1.ctor === '::') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{grid: _p1._0, prev: _p1._1}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
 			case 'Tick':
 				return model.isCounting ? {
 					ctor: '_Tuple2',
@@ -9927,11 +9943,13 @@ var _user$project$Main$update = F2(
 			case 'Restart':
 				return {
 					ctor: '_Tuple2',
-					_0: A3(
+					_0: A4(
 						_user$project$Main$Model,
 						0,
 						false,
-						A2(_user$project$Grid$create, _user$project$Main$gridHeight, _user$project$Main$gridWidth)),
+						A2(_user$project$Grid$create, _user$project$Main$gridHeight, _user$project$Main$gridWidth),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Flag':
@@ -9945,41 +9963,41 @@ var _user$project$Main$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Plant':
-				var _p2 = _p0._0;
-				var _p1 = _p0._1;
+				var _p3 = _p0._0;
+				var _p2 = _p0._1;
 				return {
 					ctor: '_Tuple2',
 					_0: model,
 					_1: A2(
 						_elm_lang$core$Random$generate,
 						function (newGrid) {
-							return A3(_user$project$Main$SetPlanted, newGrid, _p2, _p1);
+							return A3(_user$project$Main$SetPlanted, newGrid, _p3, _p2);
 						},
-						A4(_user$project$Grid$plantBombs, _p2, _p1, _user$project$Main$bombCount, model.grid))
+						A4(_user$project$Grid$plantBombs, _p3, _p2, _user$project$Main$bombCount, model.grid))
 				};
 			case 'SetPlanted':
-				var _p6 = _p0._1;
-				var _p5 = _p0._2;
-				var _p4 = _p0._0;
-				var _p3 = A3(_user$project$Grid$get, _p6, _p5, _p4);
-				if (_p3.ctor === 'Nothing') {
+				var _p7 = _p0._1;
+				var _p6 = _p0._2;
+				var _p5 = _p0._0;
+				var _p4 = A3(_user$project$Grid$get, _p7, _p6, _p5);
+				if (_p4.ctor === 'Nothing') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
-					return _p3._0.hasBomb ? {
+					return _p4._0.hasBomb ? {
 						ctor: '_Tuple2',
 						_0: model,
 						_1: A2(
 							_elm_lang$core$Random$generate,
 							function (yetAnotherGrid) {
-								return A3(_user$project$Main$SetPlanted, yetAnotherGrid, _p6, _p5);
+								return A3(_user$project$Main$SetPlanted, yetAnotherGrid, _p7, _p6);
 							},
-							A4(_user$project$Grid$plantBombs, _p6, _p5, _user$project$Main$bombCount, model.grid))
+							A4(_user$project$Grid$plantBombs, _p7, _p6, _user$project$Main$bombCount, model.grid))
 					} : {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								grid: A3(_user$project$Grid$uncoverAll, _p6, _p5, _p4),
+								grid: A3(_user$project$Grid$uncoverAll, _p7, _p6, _p5),
 								isCounting: true
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
@@ -9989,12 +10007,15 @@ var _user$project$Main$update = F2(
 				var newGrid = A3(_user$project$Grid$uncoverAll, _p0._0, _p0._1, model.grid);
 				var isBombed = _user$project$Grid$isBombed(newGrid);
 				var isWin = _user$project$Grid$isWin(newGrid);
-				var isCounting = _elm_lang$core$Basics$not(isBombed || isWin);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{grid: newGrid, isCounting: isCounting}),
+						{
+							grid: newGrid,
+							isCounting: _elm_lang$core$Basics$not(isBombed || isWin),
+							prev: A2(_elm_lang$core$List_ops['::'], model.grid, model.prev)
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
@@ -10006,7 +10027,11 @@ var _user$project$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{grid: newGrid, isCounting: isCounting}),
+						{
+							grid: newGrid,
+							isCounting: _elm_lang$core$Basics$not(isBombed || isWin),
+							prev: A2(_elm_lang$core$List_ops['::'], model.grid, model.prev)
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
@@ -10025,8 +10050,8 @@ var _user$project$Main$handleButton = F4(
 			return _elm_lang$core$Result$Ok(
 				A2(_user$project$Main$Plant, y, x));
 		} else {
-			var _p7 = evButtons;
-			switch (_p7) {
+			var _p8 = evButtons;
+			switch (_p8) {
 				case 2:
 					return _elm_lang$core$Result$Ok(
 						A2(_user$project$Main$Flag, y, x));
@@ -10068,8 +10093,8 @@ var _user$project$Main$onCellClick2 = F6(
 var _user$project$Main$tcell = F7(
 	function (isBombed, noneUncovered, isWin, grid, y, x, cell) {
 		var classes = function () {
-			var _p8 = cell.status;
-			switch (_p8.ctor) {
+			var _p9 = cell.status;
+			switch (_p9.ctor) {
 				case 'Cleared':
 					return cell.hasBomb ? _user$project$Main$cellBombedClasses : _user$project$Main$cellClearedClasses;
 				case 'Flagged':
@@ -10119,13 +10144,13 @@ var _user$project$Main$tgrid = F4(
 				A4(_user$project$Main$trow, isBombed, noneUncovered, isWin, grid),
 				grid));
 	});
-var _user$project$Main$view = function (_p9) {
-	var _p10 = _p9;
-	var _p11 = _p10.grid;
-	var remainingCount = _user$project$Main$bombCount - _user$project$Grid$flagCount(_p11);
-	var noneUncovered = _user$project$Grid$noneUncovered(_p11);
-	var isWin = _user$project$Grid$isWin(_p11);
-	var isBombed = _user$project$Grid$isBombed(_p11);
+var _user$project$Main$view = function (_p10) {
+	var _p11 = _p10;
+	var _p12 = _p11.grid;
+	var remainingCount = _user$project$Main$bombCount - _user$project$Grid$flagCount(_p12);
+	var noneUncovered = _user$project$Grid$noneUncovered(_p12);
+	var isWin = _user$project$Grid$isWin(_p12);
+	var isBombed = _user$project$Grid$isBombed(_p12);
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -10175,16 +10200,17 @@ var _user$project$Main$view = function (_p9) {
 								_elm_lang$html$Html$span,
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html_Attributes$class('grid-time')
+										_elm_lang$html$Html_Attributes$class('grid-time'),
+										_elm_lang$html$Html_Events$onClick(_user$project$Main$Back)
 									]),
 								_elm_lang$core$Native_List.fromArray(
 									[
 										_elm_lang$html$Html$text(
-										A4(_user$project$Main$leftPadMax, '0', 3, _p10.secondsElapsed, 999))
+										A4(_user$project$Main$leftPadMax, '0', 3, _p11.secondsElapsed, 999))
 									])),
 								A2(_user$project$Main$face, isBombed, isWin)
 							])),
-						A4(_user$project$Main$tgrid, isBombed, noneUncovered, isWin, _p11)
+						A4(_user$project$Main$tgrid, isBombed, noneUncovered, isWin, _p12)
 					]))
 			]));
 };
